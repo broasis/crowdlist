@@ -8,7 +8,6 @@ import {
 } from "react-router-dom";
 import GroceryLists from "./components/GroceryLists";
 import GroceryList from "./components/GroceryList";
-import GroceryListsExample from "./data/lists";
 
 const initialUserId = "efgh";
 
@@ -42,10 +41,7 @@ function App() {
       <Container>
         <Router>
           <Routes>
-            <Route
-              path="/"
-              element={<GroceryLists data={GroceryListsExample} />}
-            />
+            <Route path="/" element={<GroceryLists />} />
             <Route
               path="/list/:listId"
               element={<GroceryList userId={userId} />}
