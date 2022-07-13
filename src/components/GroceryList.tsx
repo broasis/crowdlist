@@ -1,12 +1,15 @@
 import { Box, List, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import CustomForm from "./Form";
-import { nanoid } from "nanoid";
-import GroceryType from "../types/grocery.type";
 import Grocery from "./Grocery";
 import { Link, useParams } from "react-router-dom";
-import { getListById } from "../data/lists";
-import GroceryListType from "../types/groceryList.type";
+import { useMutation, useQuery } from "@apollo/client";
+import {
+  ADD_GROCERY_ITEM,
+  GET_GROCERY_LIST,
+  VOTE_GROCERY_ITEM,
+} from "../graphql";
+import GroceryType from "../types/grocery.type";
 
 interface IProps {
   userId?: string;
@@ -14,80 +17,37 @@ interface IProps {
 
 const GroceryList = (props: IProps) => {
   const { listId } = useParams();
-  const [list, setList] = useState<GroceryListType | undefined>(
-    getListById(listId)
-  );
   const { userId } = props;
-  useEffect(() => {
-    setList(getListById(listId));
-  }, [listId]);
 
-  if (!list) {
+  const groceryListResult = useQuery(GET_GROCERY_LIST, {
+    variables: { listId },
+  });
+  const [addGroceryItem] = useMutation(ADD_GROCERY_ITEM);
+  const [voteGroceryItem] = useMutation(VOTE_GROCERY_ITEM);
+
+  if (!groceryListResult.data) {
     return <p>List not found</p>;
   }
 
-  function addGrocery(name: string, userid: string) {
-    if (!list) {
-      return;
-    }
-
-    let existingGrocery = list?.groceries.find(
-      (grocery) => grocery.name === name
-    );
-
-    if (existingGrocery) {
-      if (existingGrocery.votes.includes(userid)) {
-        console.log("grocery was already added by user");
-      } else {
-        existingGrocery.votes.push(userid);
-        setList({
-          ...list,
-          groceries: list.groceries.map((grocery) => {
-            if (existingGrocery && grocery.id === existingGrocery.id) {
-              return existingGrocery;
-            }
-            return grocery;
-          }),
-        });
-      }
-    } else {
-      const newGrocery = { name: name, votes: [userid], id: nanoid() };
-      setList({ ...list, groceries: [...list.groceries, newGrocery] });
-    }
+  async function handleAddGrocery(itemName: string) {
+    await addGroceryItem({ variables: { listId, itemName, userId } });
+    await groceryListResult.refetch({ listId });
   }
 
-  const handleVote = (id: string) => {
-    if (!userId) {
-      return;
-    }
+  async function handleVoteItem(itemId: string) {
+    await voteGroceryItem({ variables: { itemId, userId } });
+    await groceryListResult.refetch({ listId });
+  }
 
-    const updatedGroceries: GroceryType[] = [];
-
-    list.groceries.forEach((grocery) => {
-      if (grocery.id === id) {
-        if (!grocery.votes.includes(userId)) {
-          grocery.votes.push(userId);
-        } else {
-          grocery.votes = grocery.votes.filter((vote) => vote !== userId);
-        }
-      }
-      if (grocery.votes.length > 0) {
-        updatedGroceries.push(grocery);
-      }
-    });
-
-    setList({ ...list, groceries: updatedGroceries });
-  };
-
-  const groceriesList = list.groceries
-    ?.sort((a, b) => b.votes.length - a.votes.length)
-    .map((grocery) => (
+  const groceriesList = [...groceryListResult.data.getItemsFromList]
+    .sort((a: GroceryType, b: GroceryType) => b.votes.length - a.votes.length)
+    .map((grocery: any) => (
       <Grocery
         grocery={grocery}
         userId={props.userId}
         id={grocery.id}
         key={grocery.id}
-        onChange={handleVote}
+        onChange={handleVoteItem}
       />
     ));
 
@@ -98,7 +58,7 @@ const GroceryList = (props: IProps) => {
           style={{ fontWeight: 600, fontSize: 30 }}
           display={"inline"}
         >
-          {list.name}
+          {listId}
         </Typography>
       </Box>
       <Box component="span">
@@ -106,8 +66,10 @@ const GroceryList = (props: IProps) => {
       </Box>
       <br />
       <CustomForm
-        existingGroceries={list.groceries.map((grocery) => grocery.name)}
-        addGrocery={addGrocery}
+        existingGroceries={groceryListResult.data.getItemsFromList.map(
+          (grocery: any) => grocery.name
+        )}
+        addGrocery={handleAddGrocery}
       />
       <List>{groceriesList}</List>
     </>

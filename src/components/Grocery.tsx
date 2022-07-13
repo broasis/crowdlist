@@ -15,7 +15,7 @@ interface IProps {
 }
 
 function Grocery({ grocery, userId, id, onChange }: IProps) {
-  let isVoted = userId && grocery.votes.includes(userId);
+  const isVoted = userId && grocery.votes.includes(userId);
 
   const handleClick = () => onChange(id);
 

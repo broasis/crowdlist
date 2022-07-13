@@ -1,21 +1,24 @@
 import React from "react";
-import GroceryListType from "../types/groceryList.type";
 import { Link } from "react-router-dom";
 import { List, ListItem, ListItemText, Typography } from "@mui/material";
+import { useQuery } from "@apollo/client";
+import { GET_GROCERIES_LISTS } from "../graphql";
 
-interface IProps {
-  data?: Array<GroceryListType>;
-  userId?: string;
-}
+const GroceryLists = () => {
+  const { loading, error, data } = useQuery<{
+    lists?: Array<{ id: string; name: string }>;
+  }>(GET_GROCERIES_LISTS);
 
-const GroceryLists = (props: IProps) => {
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error :(</p>;
+
   return (
     <>
       <Typography style={{ fontWeight: 600, fontSize: 30 }}>
         Groceries Lists
       </Typography>
       <List>
-        {props.data?.map((groceryList) => (
+        {data?.lists?.map((groceryList) => (
           <ListItem>
             <Link to={`/list/${groceryList.id}`} key={groceryList.id}>
               <ListItemText>{groceryList.name}</ListItemText>

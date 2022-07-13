@@ -25,7 +25,7 @@ function CustomForm(props: IProps) {
       return;
     }
 
-    props.addGrocery(name, "efgh");
+    props.addGrocery(name);
     setName("");
   }
 

@@ -2,7 +2,7 @@ import GroceryType from "./grocery.type";
 
 interface GroceryListType {
   name: string;
-  groceries: GroceryType[];
+  items: GroceryType[];
   id: string;
 }
 
