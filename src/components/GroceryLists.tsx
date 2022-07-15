@@ -19,7 +19,7 @@ const GroceryLists = () => {
       </Typography>
       <List>
         {data?.lists?.map((groceryList) => (
-          <ListItem>
+          <ListItem key={groceryList.id}>
             <Link to={`/list/${groceryList.id}`} key={groceryList.id}>
               <ListItemText>{groceryList.name}</ListItemText>
             </Link>

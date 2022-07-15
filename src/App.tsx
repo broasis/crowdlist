@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Container, AppBar, TextField } from "@mui/material";
+import { Container, AppBar, Button, Box, Toolbar } from "@mui/material";
 import {
   BrowserRouter as Router,
   Route,
@@ -8,43 +8,46 @@ import {
 } from "react-router-dom";
 import GroceryLists from "./components/GroceryLists";
 import GroceryList from "./components/GroceryList";
-
-const initialUserId = "efgh";
+import Login from "./components/Login";
+import { verifyLogin } from "./login";
 
 function App() {
-  const [userId, setUserId] = useState<string>(initialUserId);
+  const [loginKey, setLoginKey] = useState<string | null>(null);
+  const isAuthed = verifyLogin(loginKey);
 
-  const changeUserId = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setUserId(e.target.value);
-  };
-
-  const handleBlur = () => {
-    if (userId === "") {
-      setUserId(initialUserId);
-    }
+  const changeLogin = (loginKey: string) => {
+    setLoginKey(loginKey);
   };
 
   return (
     <Container fixed className="App">
-      <header style={{ marginBottom: "40px" }}>
-        <AppBar>Groceries List</AppBar>
-      </header>
-      <Container>
-        <TextField
-          label={"UserId"}
-          value={userId}
-          onChange={changeUserId}
-          onBlur={handleBlur}
-          autoComplete={"off"}
-        />
-      </Container>
+      <AppBar position="fixed">
+        <Toolbar>
+          <Box display="flex" flexGrow={1}>
+            Groceries List {">"}{" "}
+            {loginKey
+              ? `authenticated with '${loginKey}'`
+              : "not authenticated"}
+          </Box>
+          <Box style={{ display: "inline", textAlign: "right" }}>
+            <Button variant="contained" href={"/login"}>
+              Login
+            </Button>
+          </Box>
+        </Toolbar>
+      </AppBar>
+      <Toolbar />
       <Container>
         <Router>
           <Routes>
             <Route path="/" element={<GroceryLists />} />
             <Route
+              path="/login"
+              element={<Login changeLogin={changeLogin} />}
+            />
+            <Route
               path="/list/:listId"
-              element={<GroceryList userId={userId} />}
+              element={<GroceryList userId={loginKey} isAuthed={isAuthed} />}
             />
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>

@@ -9,12 +9,13 @@ import {
 
 interface IProps {
   grocery: GroceryType;
-  userId?: string;
+  userId: string | null;
   id: string;
   onChange: (id: string) => void;
+  isAuthed: boolean;
 }
 
-function Grocery({ grocery, userId, id, onChange }: IProps) {
+function Grocery({ grocery, userId, id, onChange, isAuthed }: IProps) {
   const isVoted = userId && grocery.votes.includes(userId);
 
   const handleClick = () => onChange(id);
@@ -24,6 +25,7 @@ function Grocery({ grocery, userId, id, onChange }: IProps) {
       className="todo stack-small"
       disableGutters={true}
       disablePadding={true}
+      key={id}
     >
       <Container>
         <ListItemText className="c-cb">{grocery.name}</ListItemText>
@@ -33,6 +35,7 @@ function Grocery({ grocery, userId, id, onChange }: IProps) {
         <IconButton
           color={isVoted ? "secondary" : "primary"}
           onClick={handleClick}
+          disabled={!isAuthed}
         >
           {isVoted ? (
             grocery.votes.length === 1 ? (

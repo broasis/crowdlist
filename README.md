@@ -29,6 +29,12 @@ Development goals are managed with a [jira board](https://crowdlist.atlassian.ne
 
 ## Changelog
 
+### 2022-07-15
+- Manage authentication with a state that can changed at another subpage */login*
+
+### 2022-07-13
+- Use Apollo client to fetch live data from mongodb and push changes to it
+
 ### 2022-07-11
 - Implement lists view so that multiple lists of groceries can be stored
 - Current set of lists includes Frühstück (breakfast), Mittag (lunch) and Abendessen (dinner)

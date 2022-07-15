@@ -12,7 +12,8 @@ import {
 import GroceryType from "../types/grocery.type";
 
 interface IProps {
-  userId?: string;
+  userId: string | null;
+  isAuthed: boolean;
 }
 
 const GroceryList = (props: IProps) => {
@@ -48,6 +49,7 @@ const GroceryList = (props: IProps) => {
         id={grocery.id}
         key={grocery.id}
         onChange={handleVoteItem}
+        isAuthed={props.isAuthed}
       />
     ));
 
@@ -70,6 +72,7 @@ const GroceryList = (props: IProps) => {
           (grocery: any) => grocery.name
         )}
         addGrocery={handleAddGrocery}
+        isAuthed={props.isAuthed}
       />
       <List>{groceriesList}</List>
     </>

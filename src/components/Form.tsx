@@ -6,6 +6,7 @@ const maxGroceryLength = 40;
 interface IProps {
   existingGroceries: string[];
   addGrocery: Function;
+  isAuthed: boolean;
 }
 
 function CustomForm(props: IProps) {
@@ -43,6 +44,7 @@ function CustomForm(props: IProps) {
             error={name != null && name.length > maxGroceryLength}
             onSubmit={handleSubmit}
             onChange={handleChange}
+            disabled={!props.isAuthed}
           />
         )}
         autoSelect={true}
@@ -52,6 +54,7 @@ function CustomForm(props: IProps) {
         onChange={(event: any, newValue: string | null) => {
           setName(newValue);
         }}
+        disabled={!props.isAuthed}
       />
     </form>
   );
