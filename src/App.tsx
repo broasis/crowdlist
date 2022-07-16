@@ -1,54 +1,39 @@
-import React, { useState } from "react";
-import { Container, AppBar, TextField } from "@mui/material";
-import {
-  BrowserRouter as Router,
-  Route,
-  Routes,
-  Navigate,
-} from "react-router-dom";
+import { Container, AppBar, Box, Toolbar } from "@mui/material";
+import { Route, Routes, Navigate } from "react-router-dom";
 import GroceryLists from "./components/GroceryLists";
 import GroceryList from "./components/GroceryList";
-
-const initialUserId = "efgh";
+import Login from "./components/Login";
+import { useQuery } from "@apollo/client";
+import { GET_AUTHENTICATED_USER } from "./graphql";
 
 function App() {
-  const [userId, setUserId] = useState<string>(initialUserId);
+  const { data } = useQuery(GET_AUTHENTICATED_USER);
 
-  const changeUserId = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setUserId(e.target.value);
-  };
-
-  const handleBlur = () => {
-    if (userId === "") {
-      setUserId(initialUserId);
-    }
-  };
+  const user = data?.authenticatedUser?.user
+    ? data.authenticatedUser.user
+    : undefined;
 
   return (
     <Container fixed className="App">
-      <header style={{ marginBottom: "40px" }}>
-        <AppBar>Groceries List</AppBar>
-      </header>
-      <Container>
-        <TextField
-          label={"UserId"}
-          value={userId}
-          onChange={changeUserId}
-          onBlur={handleBlur}
-          autoComplete={"off"}
-        />
-      </Container>
-      <Container>
-        <Router>
-          <Routes>
-            <Route path="/" element={<GroceryLists />} />
-            <Route
-              path="/list/:listId"
-              element={<GroceryList userId={userId} />}
-            />
-            <Route path="*" element={<Navigate to="/" />} />
-          </Routes>
-        </Router>
+      <AppBar position="fixed">
+        <Toolbar>
+          <Box display="flex" flexGrow={1}>
+            Crowdlist {">"}{" "}
+            {user ? `Willkommen zurück, ${user.name}` : "not authenticated"}
+          </Box>
+        </Toolbar>
+      </AppBar>
+      <Container style={{ marginTop: "5em" }}>
+        <Routes>
+          <Route path="/" element={<GroceryLists />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/login/:token" element={<Login />} />
+          <Route
+            path="/list/:listId"
+            element={<GroceryList userId={user?.id} isAuthed={data} />}
+          />
+          <Route path="*" element={<Navigate to="/" />} />
+        </Routes>
       </Container>
     </Container>
   );

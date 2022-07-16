@@ -1,5 +1,16 @@
 import { gql } from "@apollo/client";
 
+export const GET_AUTHENTICATED_USER = gql`
+  query getAuthenticatedUser {
+    authenticatedUser {
+      user {
+        id
+        name
+      }
+    }
+  }
+`;
+
 export const GET_GROCERIES_LISTS = gql`
   query GetLists {
     lists {
@@ -10,18 +21,22 @@ export const GET_GROCERIES_LISTS = gql`
 `;
 
 export const GET_GROCERY_LIST = gql`
-  query GetQuery($listId: String!) {
-    getItemsFromList(listId: $listId) {
+  query GetQuery($id: String!) {
+    getListById(id: $id) {
       name
       id
-      votes
+      items {
+        id
+        name
+        votes
+      }
     }
   }
 `;
 
 export const ADD_GROCERY_ITEM = gql`
-  mutation AddGrocery($listId: String!, $itemName: String!, $userId: String!) {
-    addItem(listId: $listId, name: $itemName, userId: $userId) {
+  mutation AddGrocery($listId: String!, $itemName: String!) {
+    addItem(listId: $listId, name: $itemName) {
       id
       name
       list {
@@ -33,8 +48,8 @@ export const ADD_GROCERY_ITEM = gql`
 `;
 
 export const VOTE_GROCERY_ITEM = gql`
-  mutation VoteGrocery($itemId: String!, $userId: String!) {
-    voteItem(itemId: $itemId, userId: $userId) {
+  mutation VoteGrocery($itemId: String!) {
+    voteItem(itemId: $itemId) {
       id
       name
       listId

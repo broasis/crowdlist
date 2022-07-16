@@ -1,6 +1,11 @@
-import React from "react";
 import { Link } from "react-router-dom";
-import { List, ListItem, ListItemText, Typography } from "@mui/material";
+import {
+  LinearProgress,
+  List,
+  ListItem,
+  ListItemText,
+  Typography,
+} from "@mui/material";
 import { useQuery } from "@apollo/client";
 import { GET_GROCERIES_LISTS } from "../graphql";
 
@@ -14,12 +19,11 @@ const GroceryLists = () => {
 
   return (
     <>
-      <Typography style={{ fontWeight: 600, fontSize: 30 }}>
-        Groceries Lists
-      </Typography>
-      <List>
+      <Typography style={{ fontWeight: 600, fontSize: 30 }}>Listen</Typography>
+      {loading && <LinearProgress />}
+      <List className="groceryLists">
         {data?.lists?.map((groceryList) => (
-          <ListItem>
+          <ListItem key={groceryList.id}>
             <Link to={`/list/${groceryList.id}`} key={groceryList.id}>
               <ListItemText>{groceryList.name}</ListItemText>
             </Link>

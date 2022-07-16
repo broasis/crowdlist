@@ -1,5 +1,4 @@
-import { Box, List, Typography } from "@mui/material";
-import React from "react";
+import { Box, Button, LinearProgress, List, Typography } from "@mui/material";
 import CustomForm from "./Form";
 import Grocery from "./Grocery";
 import { Link, useParams } from "react-router-dom";
@@ -12,66 +11,84 @@ import {
 import GroceryType from "../types/grocery.type";
 
 interface IProps {
-  userId?: string;
+  userId: string | null;
+  isAuthed: boolean;
 }
 
 const GroceryList = (props: IProps) => {
   const { listId } = useParams();
-  const { userId } = props;
 
   const groceryListResult = useQuery(GET_GROCERY_LIST, {
-    variables: { listId },
+    variables: { id: listId },
   });
-  const [addGroceryItem] = useMutation(ADD_GROCERY_ITEM);
-  const [voteGroceryItem] = useMutation(VOTE_GROCERY_ITEM);
+  const [addGroceryItem, addStatus] = useMutation(ADD_GROCERY_ITEM);
+  const [voteGroceryItem, voteStatus] = useMutation(VOTE_GROCERY_ITEM);
 
-  if (!groceryListResult.data) {
-    return <p>List not found</p>;
+  if (!groceryListResult.data?.getListById) {
+    return <LinearProgress />;
   }
 
   async function handleAddGrocery(itemName: string) {
-    await addGroceryItem({ variables: { listId, itemName, userId } });
-    await groceryListResult.refetch({ listId });
+    await addGroceryItem({ variables: { listId, itemName } });
+    await groceryListResult.refetch({ id: listId });
   }
 
   async function handleVoteItem(itemId: string) {
-    await voteGroceryItem({ variables: { itemId, userId } });
-    await groceryListResult.refetch({ listId });
+    await voteGroceryItem({ variables: { itemId } });
+    await groceryListResult.refetch({ id: listId });
   }
-
-  const groceriesList = [...groceryListResult.data.getItemsFromList]
-    .sort((a: GroceryType, b: GroceryType) => b.votes.length - a.votes.length)
-    .map((grocery: any) => (
-      <Grocery
-        grocery={grocery}
-        userId={props.userId}
-        id={grocery.id}
-        key={grocery.id}
-        onChange={handleVoteItem}
-      />
-    ));
 
   return (
     <>
-      <Box component="span" mr={1}>
+      <Box
+        component="span"
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+        }}
+      >
         <Typography
           style={{ fontWeight: 600, fontSize: 30 }}
           display={"inline"}
         >
-          {listId}
+          {groceryListResult.data.getListById.name}
         </Typography>
-      </Box>
-      <Box component="span">
-        <Link to="/">Zurück zum Start</Link>
+        <Link to="/" style={{ textDecoration: "none" }}>
+          <Button variant="outlined">Zurück</Button>
+        </Link>
       </Box>
       <br />
-      <CustomForm
-        existingGroceries={groceryListResult.data.getItemsFromList.map(
-          (grocery: any) => grocery.name
-        )}
-        addGrocery={handleAddGrocery}
-      />
-      <List>{groceriesList}</List>
+      {props.userId && (
+        <CustomForm
+          existingGroceries={groceryListResult.data.getListById.items.map(
+            (grocery: any) => grocery.name
+          )}
+          addGrocery={handleAddGrocery}
+          isAuthed={props.isAuthed}
+          isLoading={addStatus.loading || voteStatus.loading}
+        />
+      )}
+      {!groceryListResult.data || groceryListResult.loading ? (
+        <LinearProgress />
+      ) : (
+        <List>
+          {[...groceryListResult.data.getListById.items]
+            .sort(
+              (a: GroceryType, b: GroceryType) =>
+                b.votes.length - a.votes.length
+            )
+            .map((grocery: any) => (
+              <Grocery
+                grocery={grocery}
+                userId={props.userId}
+                id={grocery.id}
+                key={grocery.id}
+                onChange={handleVoteItem}
+                isLoading={addStatus.loading || voteStatus.loading}
+              />
+            ))}
+        </List>
+      )}
     </>
   );
 };
