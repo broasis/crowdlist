@@ -21,11 +21,15 @@ export const GET_GROCERIES_LISTS = gql`
 `;
 
 export const GET_GROCERY_LIST = gql`
-  query GetQuery($listId: String!) {
-    getItemsFromList(listId: $listId) {
+  query GetQuery($id: String!) {
+    getListById(id: $id) {
       name
       id
-      votes
+      items {
+        id
+        name
+        votes
+      }
     }
   }
 `;

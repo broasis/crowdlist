@@ -19,38 +19,24 @@ const GroceryList = (props: IProps) => {
   const { listId } = useParams();
 
   const groceryListResult = useQuery(GET_GROCERY_LIST, {
-    variables: { listId },
+    variables: { id: listId },
   });
   const [addGroceryItem, addStatus] = useMutation(ADD_GROCERY_ITEM);
   const [voteGroceryItem, voteStatus] = useMutation(VOTE_GROCERY_ITEM);
 
-  if (!groceryListResult.data) {
+  if (!groceryListResult.data?.getListById) {
     return <LinearProgress />;
   }
 
   async function handleAddGrocery(itemName: string) {
     await addGroceryItem({ variables: { listId, itemName } });
-    await groceryListResult.refetch({ listId });
+    await groceryListResult.refetch({ id: listId });
   }
 
   async function handleVoteItem(itemId: string) {
     await voteGroceryItem({ variables: { itemId } });
-    await groceryListResult.refetch({ listId });
+    await groceryListResult.refetch({ id: listId });
   }
-
-  const groceriesList = [...groceryListResult.data.getItemsFromList]
-    .sort((a: GroceryType, b: GroceryType) => b.votes.length - a.votes.length)
-    .map((grocery: any) => (
-      <Grocery
-        grocery={grocery}
-        userId={props.userId}
-        id={grocery.id}
-        key={grocery.id}
-        onChange={handleVoteItem}
-        isAuthed={props.isAuthed}
-        isLoading={addStatus.loading || voteStatus.loading}
-      />
-    ));
 
   return (
     <>
@@ -65,7 +51,7 @@ const GroceryList = (props: IProps) => {
           style={{ fontWeight: 600, fontSize: 30 }}
           display={"inline"}
         >
-          {listId}
+          {groceryListResult.data.getListById.name}
         </Typography>
         <Link to="/" style={{ textDecoration: "none" }}>
           <Button variant="outlined">Zurück</Button>
@@ -74,7 +60,7 @@ const GroceryList = (props: IProps) => {
       <br />
       {props.userId && (
         <CustomForm
-          existingGroceries={groceryListResult.data.getItemsFromList.map(
+          existingGroceries={groceryListResult.data.getListById.items.map(
             (grocery: any) => grocery.name
           )}
           addGrocery={handleAddGrocery}
@@ -82,10 +68,27 @@ const GroceryList = (props: IProps) => {
           isLoading={addStatus.loading || voteStatus.loading}
         />
       )}
-      {groceryListResult.loading ? (
+      {!groceryListResult.data || groceryListResult.loading ? (
         <LinearProgress />
       ) : (
-        <List>{groceriesList}</List>
+        <List>
+          {[...groceryListResult.data.getListById.items]
+            .sort(
+              (a: GroceryType, b: GroceryType) =>
+                b.votes.length - a.votes.length
+            )
+            .map((grocery: any) => (
+              <Grocery
+                grocery={grocery}
+                userId={props.userId}
+                id={grocery.id}
+                key={grocery.id}
+                onChange={handleVoteItem}
+                isAuthed={props.isAuthed}
+                isLoading={addStatus.loading || voteStatus.loading}
+              />
+            ))}
+        </List>
       )}
     </>
   );
