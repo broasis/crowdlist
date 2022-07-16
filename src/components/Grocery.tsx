@@ -11,18 +11,10 @@ interface IProps {
   userId: string | null;
   id: string;
   onChange: (id: string) => void;
-  isAuthed: boolean;
   isLoading: boolean;
 }
 
-function Grocery({
-  grocery,
-  userId,
-  id,
-  onChange,
-  isAuthed,
-  isLoading,
-}: IProps) {
+function Grocery({ grocery, userId, id, onChange, isLoading }: IProps) {
   const isVoted = userId && grocery.votes.includes(userId);
 
   const handleClick = () => onChange(id);
@@ -42,7 +34,7 @@ function Grocery({
         <IconButton
           color={isVoted ? "secondary" : "primary"}
           onClick={handleClick}
-          disabled={!isAuthed || isLoading}
+          disabled={!userId || isLoading}
         >
           {isVoted ? (
             grocery.votes.length === 1 ? (

@@ -84,7 +84,6 @@ const GroceryList = (props: IProps) => {
                 id={grocery.id}
                 key={grocery.id}
                 onChange={handleVoteItem}
-                isAuthed={props.isAuthed}
                 isLoading={addStatus.loading || voteStatus.loading}
               />
             ))}

@@ -9,7 +9,9 @@ import { GET_AUTHENTICATED_USER } from "./graphql";
 function App() {
   const { data } = useQuery(GET_AUTHENTICATED_USER);
 
-  const user = data ? data.authenticatedUser.user : undefined;
+  const user = data?.authenticatedUser?.user
+    ? data.authenticatedUser.user
+    : undefined;
 
   return (
     <Container fixed className="App">
@@ -17,7 +19,7 @@ function App() {
         <Toolbar>
           <Box display="flex" flexGrow={1}>
             Crowdlist {">"}{" "}
-            {data ? `Willkommen zurück, ${user.name}` : "not authenticated"}
+            {user ? `Willkommen zurück, ${user.name}` : "not authenticated"}
           </Box>
         </Toolbar>
       </AppBar>
