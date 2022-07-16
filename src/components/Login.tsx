@@ -1,26 +1,28 @@
 import { Button, Container, TextField } from "@mui/material";
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { verifyLogin } from "../login";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
-interface IProps {
-  changeLogin: Function;
-}
-
-const Login = (props: IProps) => {
+const Login = () => {
   const [login, setLogin] = useState<string | null>("");
   const navigate = useNavigate();
 
-  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+  const { token } = useParams();
+
+  useEffect(() => {
+    if (token) {
+      localStorage.setItem("userid", token);
+      navigate("/");
+    }
+  }, [navigate, token]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLogin(e.target.value);
-  }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (verifyLogin(login)) {
-      props.changeLogin(login);
-      navigate("/");
-    }
+    localStorage.setItem("userid", login || "");
+    navigate("/");
   };
 
   return (
@@ -33,7 +35,6 @@ const Login = (props: IProps) => {
           <TextField
             onSubmit={handleSubmit}
             onChange={handleChange}
-            error={!verifyLogin(login)}
             label={"Login eingeben"}
             value={login}
           ></TextField>

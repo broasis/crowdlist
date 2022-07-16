@@ -17,7 +17,6 @@ interface IProps {
 
 const GroceryList = (props: IProps) => {
   const { listId } = useParams();
-  const { userId } = props;
 
   const groceryListResult = useQuery(GET_GROCERY_LIST, {
     variables: { listId },
@@ -30,12 +29,12 @@ const GroceryList = (props: IProps) => {
   }
 
   async function handleAddGrocery(itemName: string) {
-    await addGroceryItem({ variables: { listId, itemName, userId } });
+    await addGroceryItem({ variables: { listId, itemName } });
     await groceryListResult.refetch({ listId });
   }
 
   async function handleVoteItem(itemId: string) {
-    await voteGroceryItem({ variables: { itemId, userId } });
+    await voteGroceryItem({ variables: { itemId } });
     await groceryListResult.refetch({ listId });
   }
 
@@ -69,7 +68,7 @@ const GroceryList = (props: IProps) => {
           {listId}
         </Typography>
         <Link to="/" style={{ textDecoration: "none" }}>
-          <Button variant="outlined">Zurück zum Start</Button>
+          <Button variant="outlined">Zurück</Button>
         </Link>
       </Box>
       <br />

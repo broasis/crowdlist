@@ -1,43 +1,34 @@
-import { useState } from "react";
-import { Container, AppBar, Button, Box, Toolbar } from "@mui/material";
+import { Container, AppBar, Box, Toolbar } from "@mui/material";
 import { Route, Routes, Navigate } from "react-router-dom";
 import GroceryLists from "./components/GroceryLists";
 import GroceryList from "./components/GroceryList";
 import Login from "./components/Login";
-import { verifyLogin } from "./login";
+import { useQuery } from "@apollo/client";
+import { GET_AUTHENTICATED_USER } from "./graphql";
 
 function App() {
-  const [loginKey, setLoginKey] = useState<string | null>(null);
-  const isAuthed = verifyLogin(loginKey);
+  const { data } = useQuery(GET_AUTHENTICATED_USER);
 
-  const changeLogin = (loginKey: string) => {
-    setLoginKey(loginKey);
-  };
+  const user = data ? data.authenticatedUser.user : undefined;
 
   return (
     <Container fixed className="App">
       <AppBar position="fixed">
         <Toolbar>
           <Box display="flex" flexGrow={1}>
-            Groceries List {">"}{" "}
-            {loginKey
-              ? `authenticated with '${loginKey}'`
-              : "not authenticated"}
-          </Box>
-          <Box style={{ display: "inline", textAlign: "right" }}>
-            <Button variant="contained" href={"/login"}>
-              Login
-            </Button>
+            Crowdlist {">"}{" "}
+            {data ? `Willkommen zurück, ${user.name}` : "not authenticated"}
           </Box>
         </Toolbar>
       </AppBar>
       <Container style={{ marginTop: "5em" }}>
         <Routes>
           <Route path="/" element={<GroceryLists />} />
-          <Route path="/login" element={<Login changeLogin={changeLogin} />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/login/:token" element={<Login />} />
           <Route
             path="/list/:listId"
-            element={<GroceryList userId={loginKey} isAuthed={isAuthed} />}
+            element={<GroceryList userId={user?.id} isAuthed={data} />}
           />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
