@@ -1,5 +1,4 @@
-import { Box, List, Typography } from "@mui/material";
-import React from "react";
+import { Box, Button, LinearProgress, List, Typography } from "@mui/material";
 import CustomForm from "./Form";
 import Grocery from "./Grocery";
 import { Link, useParams } from "react-router-dom";
@@ -23,11 +22,11 @@ const GroceryList = (props: IProps) => {
   const groceryListResult = useQuery(GET_GROCERY_LIST, {
     variables: { listId },
   });
-  const [addGroceryItem] = useMutation(ADD_GROCERY_ITEM);
-  const [voteGroceryItem] = useMutation(VOTE_GROCERY_ITEM);
+  const [addGroceryItem, addStatus] = useMutation(ADD_GROCERY_ITEM);
+  const [voteGroceryItem, voteStatus] = useMutation(VOTE_GROCERY_ITEM);
 
   if (!groceryListResult.data) {
-    return <p>List not found</p>;
+    return <LinearProgress />;
   }
 
   async function handleAddGrocery(itemName: string) {
@@ -50,31 +49,45 @@ const GroceryList = (props: IProps) => {
         key={grocery.id}
         onChange={handleVoteItem}
         isAuthed={props.isAuthed}
+        isLoading={addStatus.loading || voteStatus.loading}
       />
     ));
 
   return (
     <>
-      <Box component="span" mr={1}>
+      <Box
+        component="span"
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+        }}
+      >
         <Typography
           style={{ fontWeight: 600, fontSize: 30 }}
           display={"inline"}
         >
           {listId}
         </Typography>
-      </Box>
-      <Box component="span">
-        <Link to="/">Zurück zum Start</Link>
+        <Link to="/" style={{ textDecoration: "none" }}>
+          <Button variant="outlined">Zurück zum Start</Button>
+        </Link>
       </Box>
       <br />
-      <CustomForm
-        existingGroceries={groceryListResult.data.getItemsFromList.map(
-          (grocery: any) => grocery.name
-        )}
-        addGrocery={handleAddGrocery}
-        isAuthed={props.isAuthed}
-      />
-      <List>{groceriesList}</List>
+      {props.userId && (
+        <CustomForm
+          existingGroceries={groceryListResult.data.getItemsFromList.map(
+            (grocery: any) => grocery.name
+          )}
+          addGrocery={handleAddGrocery}
+          isAuthed={props.isAuthed}
+          isLoading={addStatus.loading || voteStatus.loading}
+        />
+      )}
+      {groceryListResult.loading ? (
+        <LinearProgress />
+      ) : (
+        <List>{groceriesList}</List>
+      )}
     </>
   );
 };

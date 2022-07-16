@@ -1,4 +1,3 @@
-import React from "react";
 import { Container, ListItem, ListItemText, IconButton } from "@mui/material";
 import GroceryType from "../types/grocery.type";
 import {
@@ -13,9 +12,17 @@ interface IProps {
   id: string;
   onChange: (id: string) => void;
   isAuthed: boolean;
+  isLoading: boolean;
 }
 
-function Grocery({ grocery, userId, id, onChange, isAuthed }: IProps) {
+function Grocery({
+  grocery,
+  userId,
+  id,
+  onChange,
+  isAuthed,
+  isLoading,
+}: IProps) {
   const isVoted = userId && grocery.votes.includes(userId);
 
   const handleClick = () => onChange(id);
@@ -35,7 +42,7 @@ function Grocery({ grocery, userId, id, onChange, isAuthed }: IProps) {
         <IconButton
           color={isVoted ? "secondary" : "primary"}
           onClick={handleClick}
-          disabled={!isAuthed}
+          disabled={!isAuthed || isLoading}
         >
           {isVoted ? (
             grocery.votes.length === 1 ? (

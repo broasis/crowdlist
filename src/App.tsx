@@ -1,11 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Container, AppBar, Button, Box, Toolbar } from "@mui/material";
-import {
-  BrowserRouter as Router,
-  Route,
-  Routes,
-  Navigate,
-} from "react-router-dom";
+import { Route, Routes, Navigate } from "react-router-dom";
 import GroceryLists from "./components/GroceryLists";
 import GroceryList from "./components/GroceryList";
 import Login from "./components/Login";
@@ -36,22 +31,16 @@ function App() {
           </Box>
         </Toolbar>
       </AppBar>
-      <Toolbar />
-      <Container>
-        <Router>
-          <Routes>
-            <Route path="/" element={<GroceryLists />} />
-            <Route
-              path="/login"
-              element={<Login changeLogin={changeLogin} />}
-            />
-            <Route
-              path="/list/:listId"
-              element={<GroceryList userId={loginKey} isAuthed={isAuthed} />}
-            />
-            <Route path="*" element={<Navigate to="/" />} />
-          </Routes>
-        </Router>
+      <Container style={{ marginTop: "5em" }}>
+        <Routes>
+          <Route path="/" element={<GroceryLists />} />
+          <Route path="/login" element={<Login changeLogin={changeLogin} />} />
+          <Route
+            path="/list/:listId"
+            element={<GroceryList userId={loginKey} isAuthed={isAuthed} />}
+          />
+          <Route path="*" element={<Navigate to="/" />} />
+        </Routes>
       </Container>
     </Container>
   );

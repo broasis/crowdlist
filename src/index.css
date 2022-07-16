@@ -1,13 +1,51 @@
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
+}
+
+.groceryLists {
+  list-style-type: none;
+  padding: 0;
+  width: 100%;
+}
+
+.groceryLists li {
+  display: flex;
+}
+
+.groceryLists a {
+  color: #369;
+  cursor: pointer;
+  flex: 1;
+  position: relative;
+  left: 0;
+  background-color: #eee;
+  padding: 1em;
+  border-radius: 4px;
+  display: flex;
+  align-items: stretch;
+  text-decoration: none;
+}
+
+.groceryLists a:hover {
+  color: #2c3a41;
+  background-color: #e6e6e6;
+  left: 0.1em;
+}
+
+.todo {
+  background-color: #eee;
+  padding: 0.5em;
+  border-radius: 4px;
+  color: #000;
+  margin-top: 5px;
 }
