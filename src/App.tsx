@@ -1,13 +1,23 @@
-import { Container, AppBar, Box, Toolbar } from "@mui/material";
-import { Route, Routes, Navigate } from "react-router-dom";
+import {
+  Container,
+  AppBar,
+  Box,
+  Toolbar,
+  Typography,
+  Button,
+} from "@mui/material";
+import { Route, Routes, Navigate, useNavigate } from "react-router-dom";
 import GroceryLists from "./components/GroceryLists";
 import GroceryList from "./components/GroceryList";
 import Login from "./components/Login";
 import { useQuery } from "@apollo/client";
 import { GET_AUTHENTICATED_USER } from "./graphql";
+import Impressum from "./components/Impressum";
 
 function App() {
   const { data } = useQuery(GET_AUTHENTICATED_USER);
+
+  const navigate = useNavigate();
 
   const user = data?.authenticatedUser?.user
     ? data.authenticatedUser.user
@@ -32,9 +42,27 @@ function App() {
             path="/list/:listId"
             element={<GroceryList userId={user?.id} isAuthed={data} />}
           />
+          <Route path="/impressum" element={<Impressum />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </Container>
+      <Container>
+        <Box sx={{ justifyContent: "flex-end" }}>
+          <Typography align={"center"} fontWeight={"bold"}>
+            © Crowdlist
+          </Typography>
+          <Typography align={"center"}>
+            created by Robert Schlick and Benjamin Gutzmann
+          </Typography>
+          <Button
+            style={{ margin: "0 auto", display: "flex" }}
+            onClick={() => navigate("/impressum")}
+          >
+            Impressum
+          </Button>
+        </Box>
+      </Container>
+      <Container></Container>
     </Container>
   );
 }
