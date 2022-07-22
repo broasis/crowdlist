@@ -1,4 +1,14 @@
-import { Box, Button, LinearProgress, List, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  FormControl,
+  InputLabel,
+  LinearProgress,
+  List,
+  MenuItem,
+  Select,
+  Typography,
+} from "@mui/material";
 import CustomForm from "./Form";
 import Grocery from "./Grocery";
 import { Link, useParams } from "react-router-dom";
@@ -9,6 +19,7 @@ import {
   VOTE_GROCERY_ITEM,
 } from "../graphql";
 import GroceryType from "../types/grocery.type";
+import React, { useState } from "react";
 
 interface IProps {
   userId: string | null;
@@ -17,6 +28,7 @@ interface IProps {
 
 const GroceryList = (props: IProps) => {
   const { listId } = useParams();
+  const [sortMethod, setSortMethod] = useState("Upvotes");
 
   const groceryListResult = useQuery(GET_GROCERY_LIST, {
     variables: { id: listId },
@@ -28,6 +40,10 @@ const GroceryList = (props: IProps) => {
     return <LinearProgress />;
   }
 
+  const handleChangeSortMethod = (e: any) => {
+    setSortMethod(e.target.value);
+  };
+
   async function handleAddGrocery(itemName: string) {
     await addGroceryItem({ variables: { listId, itemName } });
     await groceryListResult.refetch({ id: listId });
@@ -36,6 +52,31 @@ const GroceryList = (props: IProps) => {
   async function handleVoteItem(itemId: string) {
     await voteGroceryItem({ variables: { itemId } });
     await groceryListResult.refetch({ id: listId });
+  }
+
+  let sortedGroceries;
+
+  switch (sortMethod) {
+    // case "Upvotes":
+    // this is the default case
+    case "Alphabetisch":
+      // https://stackoverflow.com/questions/6712034/sort-array-by-firstname-alphabetically-in-javascript
+      sortedGroceries = [...groceryListResult.data.getListById.items].sort(
+        (a: GroceryType, b: GroceryType) => {
+          if (a.name < b.name) {
+            return -1;
+          }
+          if (a.name > b.name) {
+            return 1;
+          }
+          return 0;
+        }
+      );
+      break;
+    default:
+      sortedGroceries = [...groceryListResult.data.getListById.items].sort(
+        (a: GroceryType, b: GroceryType) => b.votes.length - a.votes.length
+      );
   }
 
   return (
@@ -68,25 +109,35 @@ const GroceryList = (props: IProps) => {
           isLoading={addStatus.loading || voteStatus.loading}
         />
       )}
+      <br />
+      <FormControl fullWidth>
+        <InputLabel id="grocery-list-items-sort-method-label">
+          Sortieren
+        </InputLabel>
+        <Select
+          id="grocery-list-items-sort-method"
+          value={sortMethod}
+          label="Sortieren"
+          onChange={handleChangeSortMethod}
+        >
+          <MenuItem value={"Upvotes"}>Upvotes</MenuItem>
+          <MenuItem value={"Alphabetisch"}>Alphabetisch</MenuItem>
+        </Select>
+      </FormControl>
       {!groceryListResult.data || groceryListResult.loading ? (
         <LinearProgress />
       ) : (
         <List>
-          {[...groceryListResult.data.getListById.items]
-            .sort(
-              (a: GroceryType, b: GroceryType) =>
-                b.votes.length - a.votes.length
-            )
-            .map((grocery: any) => (
-              <Grocery
-                grocery={grocery}
-                userId={props.userId}
-                id={grocery.id}
-                key={grocery.id}
-                onChange={handleVoteItem}
-                isLoading={addStatus.loading || voteStatus.loading}
-              />
-            ))}
+          {sortedGroceries.map((grocery: any) => (
+            <Grocery
+              grocery={grocery}
+              userId={props.userId}
+              id={grocery.id}
+              key={grocery.id}
+              onChange={handleVoteItem}
+              isLoading={addStatus.loading || voteStatus.loading}
+            />
+          ))}
         </List>
       )}
     </>
