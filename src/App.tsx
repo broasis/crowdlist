@@ -24,16 +24,18 @@ function App() {
     : undefined;
 
   return (
-    <Container fixed className="App">
-      <AppBar position="fixed">
-        <Toolbar>
-          <Box display="flex" flexGrow={1}>
-            Crowdlist {">"}{" "}
-            {user ? `Willkommen zurück, ${user.name}` : "not authenticated"}
-          </Box>
-        </Toolbar>
-      </AppBar>
-      <Container style={{ marginTop: "5em" }}>
+    <Container className="App">
+      <Container>
+        <AppBar position="fixed" component="header">
+          <Toolbar>
+            <Box display="flex" flexGrow={1}>
+              Crowdlist {">"}{" "}
+              {user ? `Willkommen zurück, ${user.name}` : "not authenticated"}
+            </Box>
+          </Toolbar>
+        </AppBar>
+      </Container>
+      <Container style={{ marginTop: "5em", minHeight: "80vh" }}>
         <Routes>
           <Route path="/" element={<GroceryLists />} />
           <Route path="/login" element={<Login />} />
@@ -47,7 +49,7 @@ function App() {
         </Routes>
       </Container>
       <Container>
-        <Box sx={{ justifyContent: "flex-end" }}>
+        <Box>
           <Typography align={"center"} fontWeight={"bold"}>
             © Crowdlist
           </Typography>
@@ -62,7 +64,6 @@ function App() {
           </Button>
         </Box>
       </Container>
-      <Container></Container>
     </Container>
   );
 }
