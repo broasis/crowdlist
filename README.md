@@ -12,14 +12,7 @@ list of grocery items. The list of items can be extended by users using the text
 on top and already added items can be upvoted by other users. A user is identified by
 an id and each grocery item holds an array of votes of all different users so that
 it remains even if the original creator of the item decides to downvote/remove the item
-from its preferences.
-
----
-Currently, the tool includes a sample dataset at **src/data/lists.ts** that was used to
-test the tool.
-
----
-The live backend will be realized by a mongo database and a graphql server that provides the 
+from its preferences. The live backend is realized by a mongo database and a graphql server that provides the 
 tool with data from the database. 
 
 ## TODOs
