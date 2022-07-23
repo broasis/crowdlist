@@ -29,6 +29,14 @@ Development goals are managed with a [jira board](https://crowdlist.atlassian.ne
 
 ## Changelog
 
+### 2022-07-23
+- Align all back buttons to use useNavigate instead of a simple link and appear in the same place
+- Adjust impressum to always appear at the bottom of the page
+
+### 2022-07-22
+- Add impressum
+- Add option to sort grocery list items by name
+
 ### 2022-07-15
 - Manage authentication with a state that can changed at another subpage */login*
 

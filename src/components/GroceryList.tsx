@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import CustomForm from "./Form";
 import Grocery from "./Grocery";
-import { Link, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery } from "@apollo/client";
 import {
   ADD_GROCERY_ITEM,
@@ -29,6 +29,7 @@ interface IProps {
 const GroceryList = (props: IProps) => {
   const { listId } = useParams();
   const [sortMethod, setSortMethod] = useState("Upvotes");
+  const navigate = useNavigate();
 
   const groceryListResult = useQuery(GET_GROCERY_LIST, {
     variables: { id: listId },
@@ -94,9 +95,9 @@ const GroceryList = (props: IProps) => {
         >
           {groceryListResult.data.getListById.name}
         </Typography>
-        <Link to="/" style={{ textDecoration: "none" }}>
-          <Button variant="outlined">Zurück</Button>
-        </Link>
+        <Button variant="outlined" onClick={() => navigate("/")}>
+          Zurück
+        </Button>
       </Box>
       <br />
       {props.userId && (

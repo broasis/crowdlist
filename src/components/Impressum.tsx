@@ -8,11 +8,24 @@ const Impressum = () => {
   return (
     <>
       <Container>
-        <Button onClick={() => navigate("/")}>Zurück zum Start</Button>
-        <Box>
-          <Typography fontWeight={"bold"} fontSize={30}>
+        <Box
+          component="span"
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+          }}
+        >
+          <Typography
+            style={{ fontWeight: 600, fontSize: 30 }}
+            display={"inline"}
+          >
             Impressum
           </Typography>
+          <Button variant="outlined" onClick={() => navigate("/")}>
+            Zurück
+          </Button>
+        </Box>
+        <Box marginLeft={2}>
           <Box component="p">Anbieter:</Box>
           <Box component="p" marginLeft={2}>
             <Box component="p">Robert Schlick</Box>
