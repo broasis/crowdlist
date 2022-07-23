@@ -1,4 +1,4 @@
-import { Button, Container, TextField } from "@mui/material";
+import { Box, Button, Container, TextField } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -27,19 +27,27 @@ const Login = () => {
 
   return (
     <>
-      <Container>
-        <Button onClick={() => navigate("/")}>Zurück zum Start</Button>
-      </Container>
-      <form onSubmit={handleSubmit}>
-        <Container>
-          <TextField
-            onSubmit={handleSubmit}
-            onChange={handleChange}
-            label={"Login eingeben"}
-            value={login}
-          ></TextField>
-        </Container>
-      </form>
+      <Box
+        component="span"
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+        }}
+      >
+        <form onSubmit={handleSubmit}>
+          <Container>
+            <TextField
+              onSubmit={handleSubmit}
+              onChange={handleChange}
+              label={"Login eingeben"}
+              value={login}
+            ></TextField>
+          </Container>
+        </form>
+        <Button variant="outlined" onClick={() => navigate("/")}>
+          Zurück
+        </Button>
+      </Box>
     </>
   );
 };
