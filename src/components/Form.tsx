@@ -41,7 +41,7 @@ function CustomForm(props: IProps) {
             <TextField
               {...params}
               id="new-grocery-input"
-              label={`Add Grocery (max. ${maxGroceryLength} Zeichen)`}
+              label={`Neuer Listeneintrag (max. ${maxGroceryLength} Zeichen)`}
               value={name}
               error={name != null && name.length > maxGroceryLength}
               onSubmit={handleSubmit}
