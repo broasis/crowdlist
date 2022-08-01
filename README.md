@@ -22,6 +22,9 @@ Development goals are managed with a [jira board](https://crowdlist.atlassian.ne
 
 ## Changelog
 
+### 2022-08-01
+- Change maximum item length to 120 characters
+
 ### 2022-07-23
 - Align all back buttons to use useNavigate instead of a simple link and appear in the same place
 - Adjust impressum to always appear at the bottom of the page
