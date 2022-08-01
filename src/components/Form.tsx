@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { TextField, Autocomplete, Box, IconButton } from "@mui/material";
 import { AddCircleOutline } from "@mui/icons-material";
 
-const maxGroceryLength = 40;
+const maxGroceryLength = 120;
 
 interface IProps {
   existingGroceries: string[];
